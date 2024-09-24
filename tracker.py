@@ -4,6 +4,10 @@ from tkinter import *
 import tkinter.messagebox as msgBox
 import tkinter.ttk as ttk
 from tkcalendar import DateEntry
+import matplotlib.pyplot as chart
+import numpy as np
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg 
+
 
 #connect to DB
 # connector = sqlite3.connect("Expense Tracker.db")
@@ -22,9 +26,9 @@ btn_font = ('Gill Sans MT', 13)
 # Initializing the GUI window
 root = Tk()
 root.title('Python Expense Tracker')
-root.geometry('1200x600')
+root.geometry('1200x800')
 root.resizable(0, 0)
-Label(root, text='EXPENSE TRACKER', font=('Century', 16, 'bold'), bg='cyan4', fg='snow').pack(fill=BOTH)
+Label(root, text='EXPENSE TRACKER', font=('Century', 20, 'bold'), bg='cyan4', fg='snow').pack(fill=BOTH)
 
 # StringVar and DoubleVar variables
 desc = StringVar()
@@ -32,13 +36,31 @@ amnt = DoubleVar()
 payee = StringVar()
 MoP = StringVar(value='Cash')
 
+
 # Frames
 data_entry_frame = Frame(root, bg=dataentery_frame_bg)
-data_entry_frame.place(x=0, y=30, relheight=0.95, relwidth=0.25)
+data_entry_frame.place(x=0, y=30, relheight=1.10, relwidth=0.25)
 buttons_frame = Frame(root, bg=buttons_frame_bg)
-buttons_frame.place(relx=0.25, rely=0.05, relwidth=0.75, relheight=0.21)
+buttons_frame.place(relx=0.25, rely=0.05, relwidth=1.0, relheight=1.0)
 tree_frame = Frame(root)
-tree_frame.place(relx=0.25, rely=0.26, relwidth=0.75, relheight=0.74)
+tree_frame.place(relx=0.25, rely=0.13, relwidth=0.75, relheight=0.74)
+
+# Create pie chart
+def draw_pie_chart():
+    y = np.array([35, 25, 25, 15])  # Sample data
+    labels = ['Category 1', 'Category 2', 'Category 3', 'Category 4']
+
+    fig, ax = chart.subplots()
+    ax.pie(y, labels=labels, autopct='%1.1f%%', startangle=90)
+    ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+    # Embed the plot in the Tkinter frame
+    canvas = FigureCanvasTkAgg(fig, master=buttons_frame)  # Create a canvas to display the figure
+    canvas.draw()  # Draw the canvas
+    canvas.get_tk_widget().place(relx=0.5, rely=0, anchor=CENTER)  # Position the canvas
+
+draw_pie_chart()
+
 # Data Entry Frame
 Label(data_entry_frame, text='Date (M/DD/YY) :', font=lbl_font, bg=dataentery_frame_bg).place(x=10, y=50)
 date = DateEntry(data_entry_frame, date=datetime.datetime.now().date(), font=entry_font)
@@ -86,6 +108,7 @@ table.column('#4', width=325, stretch=NO)  # Title column
 table.column('#5', width=135, stretch=NO)  # Amount column
 table.column('#6', width=125, stretch=NO)  # Mode of Payment column
 table.place(relx=0, y=0, relheight=1, relwidth=1)
+
 # list_all_expenses()
 # Finalizing the GUI window
 root.update()
